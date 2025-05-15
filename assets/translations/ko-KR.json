@@ -1,6 +1,8 @@
 {
   "login": {
     "welcome": "어서오세요",
+    "email": "이메일",
+    "password": "비밀번호",
     "login": "로그인",
     "orUse": "또는",
     "signInWith": "{sso}로 로그인"
