@@ -1,7 +1,10 @@
 import 'package:easy_extension/easy_extension.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:news_portal/api/auth_api.dart';
+import 'package:news_portal/app/router/app_router.dart';
 import 'package:news_portal/app/router/translations/app_trans.dart';
 import 'package:news_portal/presentation/widgets/app_logo.dart';
 import 'package:news_portal/presentation/widgets/app_scaffold.dart';
@@ -25,13 +28,32 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  // NOTE : 이메일, 패스워드 가져오기
-  void _onLogin() {
+  // NOTE : 로그인
+  void _onLogin() async {
     final email = _emailController.text;
     final password = _passwordController.text;
 
-    debugPrint('이메일: $email');
-    debugPrint('비밀번호: $password');
+    // TODO : 토큰 발생 API
+    final auth = await AuthApi.login(email: email, password: password);
+
+    if (auth == null) return;
+    // mount : 탑재한다
+    if (!mounted) return;
+
+    context.goNamed(AppRoute.newsList.name);
+  }
+
+  TextField _textField({
+    required TextEditingController controller,
+    required String hintText,
+  }) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        hintText: hintText,
+      ),
+    );
   }
 
   @override
@@ -58,11 +80,14 @@ class _LoginScreenState extends State<LoginScreen> {
               controller: _emailController,
               hintText: AppTrans.login.email.tr(),
             ),
+            20.heightBox,
             // #region 패스워드 입력
             _textField(
               controller: _passwordController,
               hintText: AppTrans.login.password.tr(),
             ),
+            20.heightBox,
+
             ElevatedButton(
               onPressed: _onLogin,
               child: Text(AppTrans.login.login.tr()),
@@ -117,19 +142,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  TextField _textField({
-    required TextEditingController controller,
-    required String hintText,
-  }) {
-    return TextField(
-      controller: _emailController,
-      decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        hintText: hintText,
       ),
     );
   }
